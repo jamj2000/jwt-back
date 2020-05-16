@@ -28,7 +28,7 @@ const userStorage = require('./security/users-storage')({
 
 // const login = require('./routes/login-route')(userStorage);
 // const signup = require('./routes/signup-route')(userStorage);
-const verify = require('./routes/verify-route');
+// const verify = require('./routes/verify-route');
 
 function login(req, res) {
   let usuario = req.body;
@@ -64,6 +64,19 @@ function signup(req, res) {
     }
   });
 }
+
+
+// function verify (req, res) {
+//   delay(1000).then(() => {
+//     //si estoy aqui ya paso por el midddleware, luego no tengo que verificar nada
+//     console.log(req.usuario);
+//     res.status(201).json({
+//       msg: 'Verified',
+//       email: req.usuario
+//     });
+//   });
+// }
+
 const router = express.Router();
 
 
