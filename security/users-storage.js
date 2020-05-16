@@ -60,16 +60,16 @@ class UserStorage {
   }
 
   userExists(user) {
-    if (this.users.filter(u => u.email === user.email
-      && u.password === user.password).length)
-      return true;
-    else return false;
-    // for (let i = 0; i < this.users.length; i++) {
-    //   if (user.email === this.users[i].email && user.password === this.users[i].password) {
-    //     return true;
-    //   }
-    // }
-    // return false;
+    // if (this.users.filter(u => u.email === user.email
+    //   && u.password === user.password).length)
+    //   return true;
+    // else return false;
+    for (let i = 0; i < this.users.length; i++) {
+      if (user.email === this.users[i].email && user.password === this.users[i].password) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }
