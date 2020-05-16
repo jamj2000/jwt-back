@@ -29,13 +29,26 @@ class UserStorage {
     });
   }
 
-  async registerUser(user) {
-    const usuario = new Usuario(user);
-    await usuario.save((err, data) => {
-      if (err) { console.log("Error: " + err); return false; }
-      else { this.users.push(user); console.log(data); return true;}
-    });
-  }
+  // async registerUser(user) {
+  //   if (user && user.email && user.password) {
+  //     if ( existeUsuario(user) ) return false;
+  //     const usuario = new Usuario(user);
+  //     await usuario.save((err, data) => {
+  //       if (err) {
+  //         console.log("Error: " + err); 
+  //         console.log('User not signed in');
+  //         res.status(401).send('User not signed in');
+  //         res.send();
+  //         return false; 
+  //       }
+  //       else { 
+  //         this.users.push(user); 
+  //         console.log('User signed in');
+  //         res.status(201).json('User signed in successfully');
+  //         return true; }
+  //     });
+  //   }
+  // }
 
   chekEmailInUse(email) {
     for (let i = 0; i < this.users.length; i++) {
@@ -59,22 +72,6 @@ class UserStorage {
     // return false;
   }
 
-  // userExists(user) {
-  //   console.log(user.email);
-  //   Usuario.findOne({ email: user.email }, (err, data) => {
-  //     if (err) {
-  //       return false;
-  //     }
-  //     else {
-  //       //console.log(data); 
-  //       return true;
-  //     }
-  //   });
-  // }
-
-  // logUsers() {
-  //   console.log(this.users);
-  // }
 }
 
 module.exports = (user) => {
