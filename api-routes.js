@@ -6,6 +6,7 @@ const controller = require("./controllers.js");
 const router = express.Router();
 
 
+
 // --------------- API REST CRUD
 
 router.get    ("/clientes",      cors(), controller.readClientes);   // Read All
@@ -21,3 +22,23 @@ router.post   ("/usuarios",      cors(), controller.createUsuario);  // Create
 router.delete ("/usuarios/:id",  cors(), controller.deleteUsuario);  // Delete
 
 module.exports = router;
+
+
+
+// const posts = [
+//   {
+//     username: 'Kyle',
+//     title: 'Post 1'
+//   },
+//   {
+//     username: 'Jim',
+//     title: 'Post 2'
+//   }
+// ]
+
+// app.get('/posts', authenticateToken, (req, res) => {
+//   res.json(posts.filter(post => post.username === req.user.name))
+// })
+
+// var fruits = ["Banana", "Orange", "Apple", "Mango"];
+// var n = fruits.includes("Mango");

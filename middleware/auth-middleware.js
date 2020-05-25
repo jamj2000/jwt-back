@@ -3,8 +3,8 @@ const delay = require('delay');
 
 module.exports = (req, res, next) => {
   delay(500).then( () => {
-    // Validate all GET routes but not /verify
-    if(req.method === 'GET' && req.path != '/verify') {
+    // Validate all GET routes
+    if(req.method === 'GET') {
       next();
       return true;
     }

@@ -2,33 +2,15 @@ const { Usuario } = require("./models.js");
 const express = require("express");
 const delay = require('delay');
 const jwt = require('jsonwebtoken');
+const config = require('./config.js');
 
-
-const ACCESS_TOKEN_SECRET = 'json-back';
-const VALIDEZ = "15m";
-
-
-/** verifica al usuario a partir del token  */
-exports.verify = (token) => {
-  try {
-    return jwt.verify(token, ACCESS_TOKEN_SECRET)
-  }
-  catch (err) {
-    return false
-  }
-}
-
-
+const refreshTokens = [];
 
 const userStorage = require('./security/users-storage')({
   email: 'jose@gmail.com',
   password: 'jose'
 });
-//userStorage.logUsers();
 
-// const login = require('./routes/login-route')(userStorage);
-// const signup = require('./routes/signup-route')(userStorage);
-// const verify = require('./routes/verify-route');
 
 function login(req, res) {
   let usuario = req.body;
@@ -36,7 +18,7 @@ function login(req, res) {
   delay(1000).then(() => {
     if (userStorage.userExists(usuario)) {
       console.log('Datos de usuario válidos');
-      const token = jwt.sign(usuario, ACCESS_TOKEN_SECRET, { expiresIn: VALIDEZ })
+      const token = jwt.sign(usuario, config.ACCESS_TOKEN_SECRET, { expiresIn: config.VALIDEZ })
       res.status(201).json(token);
     } else {
       console.log('Datos de usuario inválidos');
@@ -59,23 +41,17 @@ function signup(req, res) {
         u.save((err, data) => {
           if (err) res.json({ error: err });
           else res.status(201).send('Usuario registrado: ' + usuario.email);
-        });        
+        }); 
+        userStorage.register(usuario);       
       }
     }
   });
 }
 
-
-// function verify (req, res) {
-//   delay(1000).then(() => {
-//     //si estoy aqui ya paso por el midddleware, luego no tengo que verificar nada
-//     console.log(req.usuario);
-//     res.status(201).json({
-//       msg: 'Verified',
-//       email: req.usuario
-//     });
-//   });
-// }
+function logout (req, res)  {
+  refreshTokens = refreshTokens.filter(token => token !== req.body.token)
+  res.sendStatus(204)
+}
 
 const router = express.Router();
 
@@ -83,7 +59,8 @@ const router = express.Router();
 // --------------- AUTH API
 router.post("/login", login);
 router.post("/signup", signup);
-router.get("/verify", verify);
+router.delete("/logout", logout);
+
 
 
 

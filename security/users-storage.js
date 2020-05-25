@@ -1,14 +1,12 @@
 const { Usuario } = require("../models.js");
 
 
-
 class UserStorage {
 
   constructor() {
     this.users = [];
     this.getUsers();
   }
-
 
   getUsers() {
     Usuario.find({}, (err, data) => {
@@ -20,6 +18,9 @@ class UserStorage {
     });
   }
 
+  register (user) {
+    this.users.push (user);
+  }
 
   chekEmailInUse(email) {
     for (let i = 0; i < this.users.length; i++) {

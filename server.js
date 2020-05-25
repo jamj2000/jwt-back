@@ -5,14 +5,17 @@ const mongoose = require('mongoose');
 const apiRoutes = require('./api-routes');
 const authRoutes = require('./auth-routes')
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
+const config = require('./config.js');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const DB_URI = process.env.DB_URI || 'mongodb://localhost/datos';
+
+
+
 
 
 // CONEXIÓN A BASE DE DATOS
-mongoose.connect(DB_URI, { useUnifiedTopology: true, useNewUrlParser: true })
+mongoose.connect(config.DB_URI, { useUnifiedTopology: true, useNewUrlParser: true })
     .then(db => console.log("Conexión a BD correcta"))
     .catch(error => console.log("Error al conectarse a la BD" + error));
 
@@ -23,10 +26,21 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname , 'public')));
 
+function authenticateToken (req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if (token == null) return res.sendStatus(401)
+  
+    jwt.verify(token, config.ACCESS_TOKEN_SECRET, (err, usuario) => {
+      if (err) return res.sendStatus(403)
+      req.usuario = usuario
+      next()
+    })
+  }
 
 // RUTAS
-app.use('/api',  apiRoutes);
+app.use('/api',  authenticateToken, apiRoutes);
 app.use('/auth', authRoutes);
 
 
-app.listen(PORT, () => console.log(`Servidor iniciado en puerto ${PORT}`));
+app.listen(config.PORT, () => console.log(`Servidor iniciado en puerto ${config.PORT}`));

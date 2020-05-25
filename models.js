@@ -1,12 +1,15 @@
 const mongoose = require('mongoose');
 
 const Cliente = mongoose.model('Cliente',
-  new mongoose.Schema({ nombre: String, apellidos: String })
+  new mongoose.Schema({ 
+    nombre: String, 
+    apellidos: String })
 );
 
 const Articulo = mongoose.model('Articulo',
   new mongoose.Schema({ nombre: String, precio: Number })
 );
+
 
 const Usuario = mongoose.model('Usuario',
   new mongoose.Schema({ 
@@ -21,6 +24,9 @@ const Usuario = mongoose.model('Usuario',
 // En caso de desear crear un índice compuesto en la BD.
 //   db.usuarios.createIndex({"email": 1, "password": 1}, {unique: true})
 
+
+
+// ---------
 module.exports = {
   Cliente,
   Articulo,
