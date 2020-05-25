@@ -12,8 +12,6 @@ const app = express();
 
 
 
-
-
 // CONEXIÓN A BASE DE DATOS
 mongoose.connect(config.DB_URI, { useUnifiedTopology: true, useNewUrlParser: true })
     .then(db => console.log("Conexión a BD correcta"))
@@ -26,7 +24,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname , 'public')));
 
-function authenticateToken (req, res, next) {
+function verifyToken (req, res, next) {
     // console.log(req.headers['authorization']);
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
@@ -40,7 +38,7 @@ function authenticateToken (req, res, next) {
   }
 
 // RUTAS
-app.use('/api',  authenticateToken, apiRoutes);
+app.use('/api',  verifyToken, apiRoutes);
 app.use('/auth', authRoutes);
 
 

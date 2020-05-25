@@ -1,4 +1,4 @@
-const { Usuario } = require("../models.js");
+const { Usuario } = require("./models.js");
 
 
 class UserStorage {
@@ -8,30 +8,17 @@ class UserStorage {
     this.getUsers();
   }
 
+  // Consultamos usuarios de la Base de Datos.
   getUsers() {
     Usuario.find({}, (err, data) => {
       if (err) console.log("Error: " + err);
-      else {
-        this.users = data.slice();
-        console.log(this.users);
-      }
+      else this.users = data.slice();
     });
   }
 
-  register (user) {
-    this.users.push (user);
-  }
-
-  chekEmailInUse(email) {
-    for (let i = 0; i < this.users.length; i++) {
-      if (this.users[i].email === email) {
-        return true;
-      }
-    }
-    return false;
-  }
 
   userExists(user) {
+    this.getUsers();
     for (let i = 0; i < this.users.length; i++) {
       if (user.email === this.users[i].email && user.password === this.users[i].password) {
         return true;

@@ -1,12 +1,12 @@
 const { Usuario } = require("./models.js");
 const express = require("express");
-const delay = require('delay');
 const jwt = require('jsonwebtoken');
 const config = require('./config.js');
 
 const refreshTokens = [];
 
-const userStorage = require('./security/users-storage')({
+
+const userStorage = require('./users-storage')({
   email: 'jose@gmail.com',
   password: 'jose'
 });
@@ -14,49 +14,43 @@ const userStorage = require('./security/users-storage')({
 
 function login(req, res) {
   let usuario = req.body;
-  console.log(usuario);
-  // delay(1000).then(() => {
-    if (userStorage.userExists(usuario)) {
-      console.log('Datos de usuario válidos');
-      const token = jwt.sign({email: usuario.email}, config.ACCESS_TOKEN_SECRET, { expiresIn: config.VALIDEZ })
-      res.status(201).json(token);
-    } else {
-      console.log('Datos de usuario inválidos');
-      res.status(401).json({ msg: 'Inicio de sesión incorrecto' });
-      res.send();
-    }
-  // });
+  // console.log(usuario);
+  if (userStorage.userExists(usuario)) {
+    const token = jwt.sign({ email: usuario.email }, config.ACCESS_TOKEN_SECRET, { expiresIn: config.VALIDEZ })
+    res.status(201).json(token); // Inicio de sesión correcto
+  } else
+    res.sendStatus(401); // Inicio de sesión incorrecto  
 }
 
 function signup(req, res) {
   let usuario = req.body;
-  console.log(usuario);
-  // delay(1000).then(() => {
-    if (userStorage.userExists(usuario)) {
-      res.status(401).json({ msg: 'Ya hay un usuario registrado con email ' + usuario.email});
-      // res.redirect(307, '/auth/login')
-    } else {
-      if (usuario && usuario.email && usuario.password) {
-        const u = new Usuario(usuario);
-        u.save((err, data) => {
-          if (err) res.json({ msg: err });
-          else res.status(201).json({ msg: 'Usuario registrado correctamente: ' + usuario.email} );
-        }); 
-        userStorage.register(usuario);       
-      }
+
+  if (userStorage.userExists(usuario)) {
+    res.sendStatus(401); // Ya hay un usuario registrado con este email
+    // res.redirect(307, '/auth/login')
+  } else {
+    if (usuario && usuario.email && usuario.password) {
+      const u = new Usuario(usuario);
+      u.save((err, data) => {
+        if (err) res.sendStatus(500);  // El usuario no pudo registrarse
+        else res.sendStatus(201); // El usuario pudo registrarse
+      });
     }
-  // });
+  }
 }
 
-function logout (req, res)  {
+function logout(req, res) {
   refreshTokens = refreshTokens.filter(token => token !== req.body.token)
-  res.sendStatus(204)
+  res.sendStatus(204);
 }
+
+
+
+// --------------- AUTH API
 
 const router = express.Router();
 
 
-// --------------- AUTH API
 router.post("/login", login);
 router.post("/signup", signup);
 router.delete("/logout", logout);
