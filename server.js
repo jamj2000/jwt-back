@@ -27,12 +27,13 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname , 'public')));
 
 function authenticateToken (req, res, next) {
+    // console.log(req.headers['authorization']);
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
-    if (token == null) return res.sendStatus(401)
+    if (token == null) return res.status(401).send("Sin autorización"); //res.sendStatus(401)
   
     jwt.verify(token, config.ACCESS_TOKEN_SECRET, (err, usuario) => {
-      if (err) return res.sendStatus(403)
+      if (err) return res.status(403).send("Acceso denegado") //res.sendStatus(403)
       req.usuario = usuario
       next()
     })
